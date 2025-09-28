@@ -1,19 +1,24 @@
+# authlog_api/core/config.py
+from pathlib import Path
+from typing import List
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-class Settings(BaseSettings):
-    DATABASE_URL: str = "postgresql+psycopg2://postgres:12345@localhost:5432/postgres"
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+# Resolve project root: D:\FASTAPI_CRUD
+ROOT = Path(__file__).resolve().parents[2]
 
-settings = Settings()
-
-# authlog_api/core/config.py
 class Settings(BaseSettings):
-    DATABASE_URL: str  # e.g. postgresql+psycopg2://user:pass@localhost:5432/dbname
-    SECRET_KEY: str = "change_me_to_a_long_random_string"
+    # Give a safe default so app starts even if .env missing
+    DATABASE_URL: str = f"sqlite:///{(ROOT / 'dev.db').as_posix()}"
+    SECRET_KEY: str = "dev-secret-change-me"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
+    CORS_ORIGINS: List[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
 
-    # pydantic v2 style config
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+    # Look for .env in BOTH the project root and CWD
+    model_config = SettingsConfigDict(
+        env_file=[str(ROOT / ".env"), ".env"],
+        env_file_encoding="utf-8",
+        case_sensitive=False,
+    )
 
 settings = Settings()

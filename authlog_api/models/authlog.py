@@ -3,18 +3,21 @@ from typing import Optional
 from datetime import datetime
 from sqlalchemy import BigInteger, Text, Boolean, TIMESTAMP, func, CheckConstraint, Index
 from sqlalchemy.dialects.postgresql import INET
-from sqlalchemy.orm import Mapped, mapped_column
-from authlog_api.db.session import Base
+from sqlalchemy.orm import Mapped, mapped_column   # <-- you need mapped_column here
+
+from authlog_api.db.base_class import Base   # import Base from base_class, not session
 
 class AuthLoginEvent(Base):
     __tablename__ = "authlog_login_events"
 
     event_id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
-    actor_id: Mapped[int] = mapped_column(BigInteger, nullable=False)               # > 0 (enforced below)
-    actor_type: Mapped[str] = mapped_column(Text, nullable=False)                   # enum-like check
+    actor_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    actor_type: Mapped[str] = mapped_column(Text, nullable=False)
     event_type: Mapped[str] = mapped_column(Text, nullable=False)
-    outcome: Mapped[str] = mapped_column(Text, nullable=False)                      # enum-like check
-    occurred_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now(), nullable=False)
+    outcome: Mapped[str] = mapped_column(Text, nullable=False)
+    occurred_at: Mapped[datetime] = mapped_column(
+        TIMESTAMP(timezone=True), server_default=func.now(), nullable=False
+    )
     ip_address: Mapped[Optional[str]] = mapped_column(INET, nullable=True)
     user_agent: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     auth_method: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
