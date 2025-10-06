@@ -9,7 +9,7 @@ export default function Login() {
     try {
       const res = await login(email, password);
       localStorage.setItem("access_token", res.data.access_token);
-      setMsg("Logged in ✔");
+      setMsg("Logged in");
     } catch (e) {
       setMsg(e.response?.data?.detail || "Login failed");
     }

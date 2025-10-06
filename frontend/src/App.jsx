@@ -1,3 +1,4 @@
+import React from "react";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import UsersPage from "./pages/UsersPage";
 import EventsPage from "./pages/EventsPage";
